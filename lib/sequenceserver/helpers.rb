@@ -95,6 +95,13 @@ module SequenceServer
           type = type.downcase
           name = name.freeze
           title = title.join(' ').freeze
+
+          # fix for issue #54
+          if name.match(/\/\w*[.]\d{2,}[.\w]*/)
+            log.info(%|Found a multi-part database volume at #{name} - ignoring it.|)
+            next
+          end
+
           #LOG.info("Found #{type} database: #{title} at #{name}")
           (db[type] ||= []) << Database.new(name, title)
         end
